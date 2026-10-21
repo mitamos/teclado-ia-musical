@@ -1,713 +1,93 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Teclado IA Musical</title>
 <style>
-:root{color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;padding:16px;background:#10131c;color:#f5f7ff;font-family:Arial,sans-serif}
-h1{text-align:center;color:#62e6ce}
-h2{margin-top:0}
-.panel{max-width:1050px;margin:18px auto;padding:20px;background:#1b2130;border:1px solid #303a4e;border-radius:15px}
-.row{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
-button,select,input{padding:10px;margin:4px;border:1px solid #3c4960;border-radius:7px}
-button{background:#62e6ce;color:#10131c;font-weight:bold;cursor:pointer}
-button:hover{background:#a2ffef}
-button:disabled{opacity:.5;cursor:not-allowed}
-input,select{max-width:100%;background:#111827;color:white}
-input[type=file]{width:100%}
-input[type=range]{width:130px}
-.muted,small{color:#bdc8d8;line-height:1.5}
-.status{white-space:pre-wrap;overflow-wrap:anywhere;color:#76f5db;line-height:1.6}
-.keyboard{display:flex;overflow-x:auto;padding:8px 4px 18px;min-height:185px}
-.key{position:relative;flex:0 0 43px;height:155px;background:#fff;border:1px solid #333;border-radius:0 0 5px 5px;color:#222;display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px;cursor:pointer;user-select:none}
-.key.black{background:#151923;color:white;height:98px;flex-basis:28px;margin-left:-14px;margin-right:-14px;z-index:2}
-.key.active{background:#62e6ce!important;color:#111}
-#drop{border:2px dashed #62e6ce;border-radius:10px;padding:15px}
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:16px;background:#10131c;color:#f5f7ff;font-family:Arial,sans-serif}
+h1{text-align:center;color:#62e6ce}.panel{max-width:1050px;margin:18px auto;padding:20px;background:#1b2130;border:1px solid #303a4e;border-radius:15px}
+.row{display:flex;align-items:center;flex-wrap:wrap;gap:7px}button,select,input{padding:10px;margin:4px;border:1px solid #3c4960;border-radius:7px}
+button{background:#62e6ce;color:#10131c;font-weight:bold;cursor:pointer}button:hover{background:#a2ffef}input,select{max-width:100%;background:#111827;color:white}input[type=file]{width:100%}
+.muted,small{color:#bdc8d8;line-height:1.5}.status{white-space:pre-wrap;overflow-wrap:anywhere;color:#76f5db;line-height:1.6}
+.keyboard{display:flex;overflow-x:auto;padding:8px 4px 18px;min-height:185px}.key{flex:0 0 43px;height:155px;background:#fff;border:1px solid #333;border-radius:0 0 5px 5px;color:#222;display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px;cursor:pointer;user-select:none}
+.key.black{background:#151923;color:white;height:98px;flex-basis:28px;margin-left:-14px;margin-right:-14px;z-index:2}.key.active{background:#62e6ce!important;color:#111}
 textarea{width:100%;min-height:90px;padding:12px;background:#10131c;color:white;border:1px solid #3c4960;border-radius:8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px}
-.grid button{min-height:44px}
-hr{border:0;border-top:1px solid #344056;margin:18px 0}
-footer{text-align:center;color:#9ba9be;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px}.grid button{min-height:44px}hr{border:0;border-top:1px solid #344056;margin:18px 0}
 </style>
-</head>
-<body>
-
+</head><body>
 <h1>🎹 TECLADO IA MUSICAL</h1>
-<p style="text-align:center" class="muted">Teclado virtual · Melodías de referencia · Compositor musical</p>
+<p class="muted" style="text-align:center">Carga tu MIDI oficial, escucha la referencia y crea variaciones conservando sus tiempos.</p>
 
-<div class="panel">
-<h2>🎹 1. Teclado virtual</h2>
-<div class="row">
-<label>Sonido
-<select id="sound">
-<option value="triangle">Teclado suave</option>
-<option value="sine">Senoidal</option>
-<option value="square">Sintetizador</option>
-<option value="sawtooth">Órgano electrónico</option>
-</select>
-</label>
-<label>Volumen <input id="volume" type="range" min="0" max="100" value="35"></label>
-<button id="octDown">− Octava</button>
-<button id="octUp">+ Octava</button>
-</div>
-<p class="muted">Toca las teclas con el ratón o usa A W S E D F T G Y H U J K.</p>
-<div class="keyboard" id="keyboard"></div>
-<p id="keyboardStatus" class="status">Listo. Pulsa una tecla.</p>
+<div class="panel"><h2>🎹 Teclado virtual</h2>
+<div class="row"><label>Sonido <select id="sound"><option value="triangle">Teclado suave</option><option value="sine">Senoidal</option><option value="square">Sintetizador</option><option value="sawtooth">Órgano</option></select></label>
+<label>Volumen <input id="volume" type="range" min="0" max="100" value="35"></label><button id="octDown">− Octava</button><button id="octUp">+ Octava</button></div>
+<div class="keyboard" id="keyboard"></div><p id="keyStatus" class="status">Listo.</p></div>
+
+<div class="panel"><h2>🎵 MIDI oficial de referencia</h2>
+<p class="muted">El proyecto busca <b>referencia.mid</b> en la misma carpeta que index.html. También puedes seleccionar un archivo MIDI desde tu computadora.</p>
+<div class="row"><button id="loadOfficial">📂 Cargar referencia.mid desde GitHub</button><button id="chooseMidi">Seleccionar MIDI desde mi PC</button><input id="midiFile" type="file" accept=".mid,.midi" hidden></div>
+<p id="officialStatus" class="status">Todavía no has cargado el MIDI oficial.</p>
+<div class="row"><button id="playOfficial">▶ Escuchar MIDI oficial</button><button id="downloadOfficial">⬇ Descargar copia oficial</button><button id="stop">■ Detener</button></div>
 </div>
 
-<div class="panel">
-<h2>🎵 2. Melodía oficial de referencia</h2>
-<p>Sube tu MIDI oficial o cárgalo desde el repositorio. Se conservará como referencia y las variaciones se crearán por separado.</p>
-<div class="row">
-<button id="loadOfficial">📂 Cargar referencia.mid desde GitHub</button>
-<button id="selectOfficial">Seleccionar MIDI oficial</button>
-<input id="officialFile" type="file" accept=".mid,.midi" hidden>
-</div>
-<p id="officialStatus" class="status">Todavía no has cargado la melodía oficial.</p>
-<div class="row">
-<button id="playOfficial">▶ Escuchar referencia</button>
-<button id="stop">■ Detener reproducción</button>
-<button id="exportOfficial">Descargar MIDI oficial</button>
-</div>
+<div class="panel"><h2>✨ Variaciones basadas en las notas y tiempos oficiales</h2>
+<p class="muted">Las variaciones conservan la posición y duración de las notas. Cambian algunas alturas; esto es una transformación algorítmica, no una IA entrenada.</p>
+<div class="grid"><button id="v1">🎼 Variación 1 · cambios leves</button><button id="v2">🎼 Variación 2 · más cambios</button><button id="v3">🎼 Variación 3 · fraseo alternativo</button></div>
+<div class="row"><label>Tempo de reproducción <input id="bpm" type="number" min="40" max="240" value="110" style="width:90px"></label><button id="playCurrent">▶ Escuchar variación</button><button id="exportMidi">⬇ Descargar variación MIDI</button><button id="exportWav">⬇ Descargar WAV</button></div>
+<h3>Notas de la composición actual</h3><textarea id="notes" readonly placeholder="Carga el MIDI oficial primero"></textarea>
+<p id="genStatus" class="status">Primero carga el MIDI oficial.</p>
 </div>
 
-<div class="panel">
-<h2>🎧 3. Subir muestras musicales</h2>
-<div id="drop">
-<p>Selecciona tus propios archivos WAV, MP3 o MIDI como referencia musical.</p>
-<input id="samples" type="file" accept=".wav,.mp3,.mid,.midi,audio/wav,audio/mpeg,audio/midi" multiple>
-</div>
-<p id="sampleInfo" class="status">No has seleccionado archivos.</p>
-<div class="row">
-<button id="analyze">🔎 Analizar audio</button>
-<button id="useSample">Usar tempo de la muestra</button>
-</div>
-<p id="analysisResults" class="status"></p>
-<p class="muted">El análisis de audio estima el tempo. No extrae por sí solo todas las notas de una mezcla ni entrena un modelo de IA.</p>
-</div>
-
-<div class="panel">
-<h2>✨ 4. Generador de melodías</h2>
-<div class="row">
-<label>Estilo
-<select id="style">
-<option value="original">Basado en el MIDI oficial</option>
-<option value="cumbia">Cumbia tropical</option>
-<option value="surena">Cumbia sureña</option>
-<option value="alegre">Melodía alegre</option>
-<option value="suave">Melodía suave</option>
-</select>
-</label>
-<label>Tempo <input id="bpm" type="number" min="50" max="200" value="110" style="width:85px"></label>
-</div>
-<div class="grid">
-<button id="variation1">🎼 Crear variación 1</button>
-<button id="variation2">🎼 Crear variación 2</button>
-<button id="variation3">🎼 Crear variación 3</button>
-<button id="generate">🎲 Crear melodía nueva</button>
-</div>
-<p id="generatorStatus" class="status">Carga el MIDI oficial para crear variaciones a partir de sus notas.</p>
-<h3>Notas de la melodía actual</h3>
-<textarea id="notes" placeholder="Las notas aparecerán aquí" readonly></textarea>
-<div class="row">
-<button id="playMelody">▶ Escuchar melodía</button>
-<button id="exportMidi">⬇ Descargar MIDI</button>
-<button id="exportWav">⬇ Descargar WAV</button>
-</div>
-<p class="muted">El sonido integrado es sintético. El MIDI exportado contiene las notas y sus tiempos; el WAV se renderiza con el sintetizador de esta página. La exportación MP3 directa y la IA entrenada con audio requieren componentes adicionales.</p>
-</div>
-
-<footer>Teclado IA Musical · Proyecto experimental</footer>
+<div class="panel"><h2>🎧 Muestras WAV/MP3</h2><input id="audioFile" type="file" accept=".wav,.mp3,audio/wav,audio/mpeg">
+<div class="row"><button id="analyze">Analizar duración y tempo aproximado</button></div><p id="audioStatus" class="status">Selecciona una muestra de audio. Este módulo no extrae aún las notas del MP3.</p></div>
 
 <script>
 'use strict';
-
-const $ = id => document.getElementById(id);
-const names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-
-let ctx = null;
-let octave = 4;
-let official = null;
-let current = [];
-let referenceTempo = 110;
-let sampleFile = null;
-let sampleAudio = null;
-let playbackTimers = [];
-let playbackToken = 0;
-let officialMidiBuffer = null;
-let officialFilename = 'referencia.mid';
-
-function getAudio() {
-  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-  if (ctx.state === 'suspended') ctx.resume();
-  return ctx;
+const $=id=>document.getElementById(id), names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+let ctx=null,octave=4,official=[],current=[],officialBuffer=null,officialTempo=120,playTimers=[],token=0;
+function audio(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();return ctx}
+function freq(n){return 440*Math.pow(2,(n-69)/12)}
+function tone(n,dur=.25,vel=95,when=null,dest=null){const c=audio(),t=when===null?c.currentTime:when,o=c.createOscillator(),g=c.createGain();o.type=$('sound').value;o.frequency.value=freq(n);const vol=Math.max(.0001,Number($('volume').value)/100*(vel/127)*.15);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+.01);g.gain.setValueAtTime(vol,t+Math.max(.02,dur*.7));g.gain.exponentialRampToValueAtTime(.0001,t+Math.max(.04,dur));o.connect(g);g.connect(dest||c.destination);o.start(t);o.stop(t+dur+.02)}
+function buildKeys(){const el=$('keyboard');el.innerHTML='';for(let i=0;i<24;i++){const n=octave*12+i,k=document.createElement('div');k.className='key'+(names[n%12].includes('#')?' black':'');k.textContent=names[n%12]+(Math.floor(n/12)-1);k.onpointerdown=e=>{e.preventDefault();tone(n);k.classList.add('active');$('keyStatus').textContent='Nota '+k.textContent};k.onpointerup=()=>k.classList.remove('active');k.onpointerleave=()=>k.classList.remove('active');el.appendChild(k)}}
+buildKeys();$('octDown').onclick=()=>{octave=Math.max(1,octave-1);buildKeys()};$('octUp').onclick=()=>{octave=Math.min(7,octave+1);buildKeys()};
+function stop(){token++;playTimers.forEach(clearTimeout);playTimers=[]}$('stop').onclick=stop;
+function vlq(v){let b=[v&127];while(v>>=7)b.unshift((v&127)|128);return b}
+function parseMidi(buf){
+ const v=new DataView(buf),ascii=(p,n)=>{let s='';for(let i=0;i<n;i++)s+=String.fromCharCode(v.getUint8(p+i));return s};
+ if(buf.byteLength<14||ascii(0,4)!=='MThd')throw Error('No es un MIDI válido');
+ const hlen=v.getUint32(4),format=v.getUint16(8),tracks=v.getUint16(10),ppq=v.getUint16(12);if(format===2||ppq&0x8000)throw Error('Formato MIDI no compatible');
+ let pos=8+hlen,tempo=500000;const evs=[];
+ for(let tr=0;tr<tracks;tr++){if(pos+8>buf.byteLength||ascii(pos,4)!=='MTrk')throw Error('Pista MIDI inválida');let len=v.getUint32(pos+4),end=pos+8+len,s={i:pos+8},tick=0,running=0;if(end>buf.byteLength)throw Error('Pista truncada');
+ while(s.i<end){let delta=0,b;do{if(s.i>=end)throw Error('Evento incompleto');b=v.getUint8(s.i++);delta=(delta<<7)|(b&127)}while(b&128);tick+=delta;let st=v.getUint8(s.i);if(st&128){s.i++;if(st<240)running=st}else{if(!running)throw Error('Evento MIDI inválido');st=running}
+ if(st===255){let type=v.getUint8(s.i++),sz=0,x;do{x=v.getUint8(s.i++);sz=(sz<<7)|(x&127)}while(x&128);if(type===81&&sz===3){let t=(v.getUint8(s.i)<<16)|(v.getUint8(s.i+1)<<8)|v.getUint8(s.i+2);if(t>0)evs.push({tick,tempo:t,meta:true})}s.i+=sz;continue}
+ if(st===240||st===247){let sz=0,x;do{x=v.getUint8(s.i++);sz=(sz<<7)|(x&127)}while(x&128);s.i+=sz;continue}
+ const kind=st&240,ch=st&15,a=v.getUint8(s.i++),b2=(kind===192||kind===208)?0:v.getUint8(s.i++);
+ if(kind===144&&b2>0)evs.push({tick,n:a,vel:b2,ch,on:true});else if(kind===128||(kind===144&&b2===0))evs.push({tick,n:a,ch,on:false})
+ }pos=end}
+ evs.sort((a,b)=>a.tick-b.tick);const active=new Map(),raw=[];
+ for(const e of evs){if(e.meta){if(e.tick===0)tempo=e.tempo;continue}const key=e.ch+':'+e.n;if(e.on){if(!active.has(key))active.set(key,[]);active.get(key).push(e)}else{const q=active.get(key);if(q&&q.length){const on=q.shift();raw.push({n:e.n,start:on.tick,end:Math.max(e.tick,on.tick+1),vel:on.vel})}}}
+ if(!raw.length)throw Error('No se encontraron notas completas');
+ raw.sort((a,b)=>a.start-b.start);const first=Math.min(...raw.map(n=>n.start));
+ return {notes:raw.map(n=>({n:n.n,start:(n.start-first)/ppq,duration:(n.end-n.start)/ppq,velocity:n.vel})),tempo,ppq}
 }
-
-function frequency(n) {
-  return 440 * Math.pow(2, (n - 69) / 12);
-}
-
-function playTone(n, duration = .3, velocity = 95, when = null, destination = null) {
-  const c = getAudio();
-  const start = when === null ? c.currentTime : when;
-  const osc = c.createOscillator();
-  const gain = c.createGain();
-  const vol = Number($('volume').value) / 100;
-  osc.type = $('sound').value;
-  osc.frequency.value = frequency(n);
-  const level = Math.max(.0001, vol * (velocity / 127) * .16);
-  gain.gain.setValueAtTime(.0001, start);
-  gain.gain.linearRampToValueAtTime(level, start + .012);
-  gain.gain.setValueAtTime(level, start + Math.max(.02, duration * .65));
-  gain.gain.exponentialRampToValueAtTime(.0001, start + Math.max(.04, duration));
-  osc.connect(gain);
-  gain.connect(destination || c.destination);
-  osc.start(start);
-  osc.stop(start + Math.max(.05, duration) + .02);
-}
-
-function buildKeyboard() {
-  const el = $('keyboard');
-  el.innerHTML = '';
-  for (let i = 0; i < 24; i++) {
-    const n = octave * 12 + i;
-    const key = document.createElement('div');
-    key.className = 'key' + (names[n % 12].includes('#') ? ' black' : '');
-    key.textContent = names[n % 12] + (Math.floor(n / 12) - 1);
-    key.onpointerdown = e => {
-      e.preventDefault();
-      playTone(n);
-      key.classList.add('active');
-      $('keyboardStatus').textContent = 'Nota: ' + key.textContent;
-    };
-    key.onpointerup = () => key.classList.remove('active');
-    key.onpointerleave = () => key.classList.remove('active');
-    el.appendChild(key);
-  }
-}
-
-buildKeyboard();
-$('octDown').onclick = () => {
-  octave = Math.max(1, octave - 1);
-  buildKeyboard();
-};
-$('octUp').onclick = () => {
-  octave = Math.min(7, octave + 1);
-  buildKeyboard();
-};
-
-const keyMap = {a:0,w:1,s:2,e:3,d:4,f:5,t:6,g:7,y:8,h:9,u:10,j:11,k:12};
-document.addEventListener('keydown', e => {
-  if (e.repeat || e.target.matches('input,textarea,select')) return;
-  const i = keyMap[e.key.toLowerCase()];
-  if (i !== undefined) playTone(octave * 12 + i);
-});
-
-function stopPlayback() {
-  playbackToken++;
-  playbackTimers.forEach(clearTimeout);
-  playbackTimers = [];
-}
-
-$('stop').onclick = stopPlayback;
-
-function showNotes(notes) {
-  $('notes').value = notes.map(n =>
-    names[n.n % 12] + (Math.floor(n.n / 12) - 1)
-  ).join(' ');
-}
-
-function safeTempo(value) {
-  return Math.max(50, Math.min(200, Number(value) || 110));
-}
-
-function playSequence(notes, tempo = safeTempo($('bpm').value)) {
-  if (!notes || !notes.length) {
-    $('generatorStatus').textContent = 'No hay notas para reproducir.';
-    return;
-  }
-  stopPlayback();
-  const token = playbackToken;
-  const c = getAudio();
-  const beat = 60 / tempo;
-  const origin = c.currentTime + .08;
-
-  let total = 0;
-  notes.forEach(note => {
-    const start = Number.isFinite(note.start) ? note.start : total;
-    const duration = Math.max(.06, note.duration || .5);
-    playTone(note.n, duration * beat, note.velocity || 95,
-      origin + start * beat);
-    total = Math.max(total, start + duration);
-  });
-  playbackTimers.push(setTimeout(() => {
-    if (token === playbackToken) $('generatorStatus').textContent = 'Reproducción finalizada.';
-  }, (total * beat + .5) * 1000));
-}
-
-$('playMelody').onclick = () => playSequence(current);
-$('playOfficial').onclick = () => {
-  if (!official) {
-    $('officialStatus').textContent = 'Primero carga el MIDI oficial.';
-    return;
-  }
-  playSequence(official, referenceTempo);
-};
-
-function readVLQ(view, state, end) {
-  let value = 0, byte, count = 0;
-  do {
-    if (state.i >= end || count++ > 4) throw new Error('Datos MIDI incompletos.');
-    byte = view.getUint8(state.i++);
-    value = (value << 7) | (byte & 127);
-  } while (byte & 128);
-  return value;
-}
-
-function parseMidi(buffer) {
-  const v = new DataView(buffer);
-  const ascii = (p, n) => {
-    let s = '';
-    for (let i = 0; i < n; i++) s += String.fromCharCode(v.getUint8(p + i));
-    return s;
-  };
-  if (buffer.byteLength < 14 || ascii(0, 4) !== 'MThd') {
-    throw new Error('El archivo no es un MIDI válido.');
-  }
-
-  const headerLen = v.getUint32(4);
-  const format = v.getUint16(8);
-  const trackCount = v.getUint16(10);
-  const division = v.getUint16(12);
-
-  if (division & 0x8000) throw new Error('MIDI con división SMPTE no compatible.');
-  if (format === 2) throw new Error('MIDI tipo 2 no compatible en esta versión.');
-
-  let pos = 8 + headerLen;
-  let tempo = 500000;
-  const events = [];
-
-  for (let tr = 0; tr < trackCount; tr++) {
-    if (pos + 8 > buffer.byteLength || ascii(pos, 4) !== 'MTrk') {
-      throw new Error('No se pudo leer una pista MIDI.');
-    }
-    const len = v.getUint32(pos + 4);
-    const start = pos + 8;
-    const end = start + len;
-    if (end > buffer.byteLength) throw new Error('Pista MIDI truncada.');
-    const state = {i:start};
-    let tick = 0, running = 0;
-
-    while (state.i < end) {
-      tick += readVLQ(v, state, end);
-      let status = v.getUint8(state.i);
-      if (status & 128) {
-        state.i++;
-        if (status < 240) running = status;
-      } else {
-        if (!running) throw new Error('Evento MIDI inválido.');
-        status = running;
-      }
-
-      if (status === 255) {
-        if (state.i >= end) break;
-        const type = v.getUint8(state.i++);
-        const size = readVLQ(v, state, end);
-        if (type === 81 && size === 3 && state.i + 3 <= end) {
-          const t = (v.getUint8(state.i) << 16) |
-                    (v.getUint8(state.i + 1) << 8) |
-                    v.getUint8(state.i + 2);
-          if (t > 0) events.push({tick, tempo:t, metaTempo:true});
-        }
-        state.i += size;
-        continue;
-      }
-
-      if (status === 240 || status === 247) {
-        const size = readVLQ(v, state, end);
-        state.i += size;
-        continue;
-      }
-
-      const kind = status & 240;
-      const channel = status & 15;
-      if (state.i >= end) break;
-      const a = v.getUint8(state.i++);
-      let b = 0;
-      if (kind !== 192 && kind !== 208) {
-        if (state.i >= end) break;
-        b = v.getUint8(state.i++);
-      }
-
-      if (kind === 144 && b > 0) {
-        events.push({tick, n:a, velocity:b, channel, on:true});
-      } else if (kind === 128 || (kind === 144 && b === 0)) {
-        events.push({tick, n:a, channel, on:false});
-      }
-    }
-    pos = end;
-  }
-
-  events.sort((a,b) => a.tick - b.tick);
-  const active = new Map();
-  const raw = [];
-  for (const e of events) {
-    if (e.metaTempo) {
-      if (e.tick === 0) tempo = e.tempo;
-      continue;
-    }
-    const key = e.channel + ':' + e.n;
-    if (e.on) {
-      if (!active.has(key)) active.set(key, []);
-      active.get(key).push(e);
-    } else {
-      const q = active.get(key);
-      if (q && q.length) {
-        const on = q.shift();
-        raw.push({
-          n:e.n, start:on.tick, end:Math.max(on.tick + 1, e.tick),
-          velocity:on.velocity
-        });
-      }
-    }
-  }
-
-  if (!raw.length) throw new Error('No se encontraron notas completas en el MIDI.');
-
-  raw.sort((a,b) => a.start - b.start);
-  const first = Math.min(...raw.map(n => n.start));
-  const last = Math.max(...raw.map(n => n.end));
-  const notes = raw.map(n => ({
-    n:n.n,
-    start:(n.start - first) / division,
-    duration:(n.end - n.start) / division,
-    velocity:n.velocity
-  }));
-
-  return {
-    notes, division, tempo,
-    durationTicks:last - first,
-    originalTempo:tempo
-  };
-}
-
-function encodeVLQ(value) {
-  let buffer = value & 127;
-  const out = [];
-  while ((value >>= 7)) {
-    buffer <<= 8;
-    buffer |= ((value & 127) | 128);
-  }
-  while (true) {
-    out.push(buffer & 255);
-    if (buffer & 128) buffer >>= 8;
-    else break;
-  }
-  return out;
-}
-
-function midiBytes(notes, bpm) {
-  const ascii = s => [...s].map(c => c.charCodeAt(0));
-  const ppq = 480;
-  const mpq = Math.round(60000000 / bpm);
-  const events = [];
-
-  events.push({t:0, bytes:[255,81,3,(mpq>>16)&255,(mpq>>8)&255,mpq&255]});
-
-  for (const note of notes) {
-    const start = Math.max(0, Math.round((note.start || 0) * ppq));
-    const end = Math.max(start + 1,
-      Math.round(((note.start || 0) + (note.duration || .5)) * ppq));
-    events.push({t:start, bytes:[144, note.n, note.velocity || 95]});
-    events.push({t:end, bytes:[128, note.n, 0]});
-  }
-
-  events.sort((a,b) => a.t - b.t);
-  const track = [];
-  let previous = 0;
-  for (const e of events) {
-    track.push(...encodeVLQ(e.t - previous), ...e.bytes);
-    previous = e.t;
-  }
-  track.push(0,255,47,0);
-
-  const len = track.length;
-  const trackChunk = [...ascii('MTrk'),
-    (len>>>24)&255,(len>>>16)&255,(len>>>8)&255,len&255,...track];
-  const header = [...ascii('MThd'),0,0,0,6,0,0,0,1,1,224];
-  return new Uint8Array([...header,...trackChunk]);
-}
-
-function download(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 3000);
-}
-
-function downloadMidi(notes, filename) {
-  if (!notes || !notes.length) {
-    $('generatorStatus').textContent = 'No hay notas para exportar.';
-    return;
-  }
-  download(new Blob([midiBytes(notes, safeTempo($('bpm').value))],
-    {type:'audio/midi'}), filename);
-}
-
-$('exportMidi').onclick = () => downloadMidi(current, 'melodia-generada.mid');
-$('exportOfficial').onclick = () => {
-  if (!officialMidiBuffer) {
-    $('officialStatus').textContent = 'Primero carga la melodía oficial.';
-    return;
-  }
-  download(new Blob([officialMidiBuffer], {type:'audio/midi'}), 'melodia-oficial.mid');
-};
-
-function useOfficialMidi(buffer, filename) {
-  const parsed = parseMidi(buffer);
-  official = parsed.notes.map(n => ({...n}));
-  current = official.map(n => ({...n}));
-  officialMidiBuffer = buffer.slice(0);
-  officialFilename = filename;
-  referenceTempo = Math.round(60000000 / parsed.tempo);
-  $('bpm').value = safeTempo(referenceTempo);
-  showNotes(current);
-  $('officialStatus').textContent =
-    'Referencia cargada: ' + filename +
-    '\nNotas detectadas: ' + official.length +
-    '\nDuración aproximada: ' +
-    (Math.max(...official.map(n => n.start + n.duration)) * 60 / referenceTempo).toFixed(2) +
-    ' segundos.' +
-    '\nEl MIDI original se conserva sin modificar.';
-  $('generatorStatus').textContent = 'Ya puedes crear variaciones a partir de la referencia.';
-}
-
-$('loadOfficial').onclick = async () => {
-  try {
-    $('officialStatus').textContent = 'Buscando referencia.mid...';
-    const response = await fetch('./referencia.mid', {cache:'no-store'});
-    if (!response.ok) throw new Error('No se encontró referencia.mid junto a index.html.');
-    useOfficialMidi(await response.arrayBuffer(), 'referencia.mid');
-  } catch (e) {
-    $('officialStatus').textContent = 'No se pudo cargar: ' + e.message +
-      '\nComprueba que referencia.mid está en la raíz del repositorio.';
-  }
-};
-
-$('selectOfficial').onclick = () => $('officialFile').click();
-$('officialFile').onchange = async e => {
-  const f = e.target.files[0];
-  if (!f) return;
-  try { useOfficialMidi(await f.arrayBuffer(), f.name); }
-  catch (err) { $('officialStatus').textContent = 'Error MIDI: ' + err.message; }
-};
-
-function createVariation(mode) {
-  if (!official || !official.length) {
-    $('generatorStatus').textContent = 'Primero carga el MIDI oficial.';
-    return;
-  }
-
-  const scale = $('style').value === 'surena'
-    ? [0,2,3,5,7,8,10] : [0,2,4,5,7,9,10];
-
-  current = official.map((note, i) => {
-    let n = note.n;
-    const change = (mode === 1 && i % 4 === 2) ||
-      (mode === 2 && i % 3 === 1) ||
-      (mode === 3 && i % 2 === 1);
-
-    if (change) {
-      const shifts = mode === 1 ? [-2,2] : mode === 2 ? [-1,1] : [-3,3];
-      n += shifts[Math.floor(Math.random() * shifts.length)];
-    }
-
-    n = Math.max(36, Math.min(96, n));
-    return {...note, n};
-  });
-
-  showNotes(current);
-  $('generatorStatus').textContent =
-    'Variación ' + mode + ' generada. Conserva el orden y el ritmo aproximado de la referencia, con cambios en algunas notas.';
-}
-
-$('variation1').onclick = () => createVariation(1);
-$('variation2').onclick = () => createVariation(2);
-$('variation3').onclick = () => createVariation(3);
-
-$('generate').onclick = () => {
-  const scale = $('style').value === 'surena'
-    ? [0,2,3,5,7,8,10]
-    : $('style').value === 'suave'
-      ? [0,2,3,5,7,9,10] : [0,2,4,5,7,9,10];
-
-  current = [];
-  let prev = 60;
-  for (let i = 0; i < 32; i++) {
-    let n;
-    if (i === 0 || Math.random() < .25) {
-      n = 60 + scale[Math.floor(Math.random() * scale.length)];
-    } else {
-      n = prev + [-2,-1,0,1,2,3,-3][Math.floor(Math.random() * 7)];
-    }
-    n = Math.max(48, Math.min(84, n));
-    current.push({n, start:i*.5, duration:.45, velocity:95});
-    prev = n;
-  }
-  showNotes(current);
-  $('generatorStatus').textContent = 'Melodía nueva generada mediante reglas musicales.';
-};
-
-$('samples').onchange = () => {
-  const files = [...$('samples').files];
-  sampleFile = files[0] || null;
-  sampleAudio = null;
-  $('sampleInfo').textContent = files.length
-    ? files.map(f => f.name + ' (' + (f.size / 1048576).toFixed(2) + ' MB)').join('\n')
-    : 'No has seleccionado archivos.';
-  $('analysisResults').textContent = '';
-};
-
-$('analyze').onclick = async () => {
-  if (!sampleFile) {
-    $('analysisResults').textContent = 'Selecciona primero un archivo WAV o MP3.';
-    return;
-  }
-  const ext = sampleFile.name.split('.').pop().toLowerCase();
-  if (ext === 'mid' || ext === 'midi') {
-    try {
-      const parsed = parseMidi(await sampleFile.arrayBuffer());
-      $('analysisResults').textContent =
-        'Archivo MIDI válido.\nNotas: ' + parsed.notes.length +
-        '\nTempo de referencia aproximado: ' +
-        Math.round(60000000 / parsed.tempo) + ' BPM.';
-    } catch (e) {
-      $('analysisResults').textContent = 'Error MIDI: ' + e.message;
-    }
-    return;
-  }
-
-  let c;
-  try {
-    $('analysisResults').textContent = 'Analizando el audio…';
-    c = new (window.AudioContext || window.webkitAudioContext)();
-    const decoded = await c.decodeAudioData(await sampleFile.arrayBuffer());
-    sampleAudio = decoded;
-    const x = decoded.getChannelData(0);
-    const block = 1024, env = [];
-    for (let i = 0; i < x.length; i += block) {
-      let sum = 0, end = Math.min(i + block, x.length);
-      for (let j = i; j < end; j++) sum += x[j] * x[j];
-      env.push(Math.sqrt(sum / (end - i)));
-    }
-
-    const max = Math.max(...env);
-    const threshold = Math.max(.008, max * .22);
-    const peaks = [];
-    for (let i = 1; i < env.length - 1; i++) {
-      if (env[i] > threshold && env[i] >= env[i-1] && env[i] > env[i+1]) {
-        if (!peaks.length || i - peaks[peaks.length - 1] > 8) peaks.push(i);
-      }
-    }
-
-    const intervals = [];
-    for (let i = 1; i < peaks.length; i++) {
-      intervals.push((peaks[i] - peaks[i-1]) * block / decoded.sampleRate);
-    }
-
-    let tempo = null;
-    if (intervals.length) {
-      intervals.sort((a,b) => a-b);
-      tempo = 60 / intervals[Math.floor(intervals.length / 2)];
-      while (tempo < 60) tempo *= 2;
-      while (tempo > 180) tempo /= 2;
-      referenceTempo = Math.round(tempo);
-    }
-
-    $('analysisResults').textContent =
-      'Análisis preliminar\nDuración: ' + decoded.duration.toFixed(2) +
-      ' segundos\nFrecuencia de muestreo: ' + decoded.sampleRate + ' Hz' +
-      '\nPicos de energía: ' + peaks.length +
-      '\nTempo estimado: ' + (tempo ? referenceTempo + ' BPM' : 'no determinado') +
-      '\n\nEste análisis no extrae automáticamente todas las notas ni la tonalidad.';
-  } catch (e) {
-    $('analysisResults').textContent = 'No se pudo leer el audio. Prueba con un WAV o MP3 válido.';
-  } finally {
-    if (c) await c.close();
-  }
-};
-
-$('useSample').onclick = () => {
-  if (!sampleFile) {
-    $('analysisResults').textContent = 'Selecciona y analiza una muestra primero.';
-    return;
-  }
-  $('bpm').value = safeTempo(referenceTempo);
-  $('analysisResults').textContent +=
-    '\nTempo de referencia aplicado al compositor. No se ha transcrito la melodía.';
-};
-
-$('exportWav').onclick = async () => {
-  if (!current || !current.length) {
-    $('generatorStatus').textContent = 'Primero genera o carga una melodía.';
-    return;
-  }
-  try {
-    const bpm = safeTempo($('bpm').value);
-    const beat = 60 / bpm;
-    const end = Math.max(...current.map(n =>
-      (n.start || 0) + (n.duration || .5))) * beat + .5;
-    const sr = 44100;
-    const offline = new OfflineAudioContext(1, Math.ceil(sr * end), sr);
-
-    current.forEach(note => {
-      const start = (note.start || 0) * beat;
-      const duration = Math.max(.06, note.duration || .5) * beat;
-      const osc = offline.createOscillator();
-      const gain = offline.createGain();
-      osc.type = $('sound').value;
-      osc.frequency.value = frequency(note.n);
-      gain.gain.setValueAtTime(.0001, start);
-      gain.gain.linearRampToValueAtTime(.12, start + .012);
-      gain.gain.setValueAtTime(.12, start + Math.max(.02, duration * .65));
-      gain.gain.exponentialRampToValueAtTime(.0001, start + Math.max(.04, duration));
-      osc.connect(gain);
-      gain.connect(offline.destination);
-      osc.start(start);
-      osc.stop(start + duration + .02);
-    });
-
-    const rendered = await offline.startRendering();
-    const ch = rendered.getChannelData(0);
-    const buffer = new ArrayBuffer(44 + ch.length * 2);
-    const view = new DataView(buffer);
-    const put = (offset, str) => {
-      for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-    };
-
-    put(0,'RIFF'); view.setUint32(4,36+ch.length*2,true);
-    put(8,'WAVE'); put(12,'fmt '); view.setUint32(16,16,true);
-    view.setUint16(20,1,true); view.setUint16(22,1,true);
-    view.setUint32(24,sr,true); view.setUint32(28,sr*2,true);
-    view.setUint16(32,2,true); view.setUint16(34,16,true);
-    put(36,'data'); view.setUint32(40,ch.length*2,true);
-
-    for (let i = 0; i < ch.length; i++) {
-      view.setInt16(44+i*2, Math.max(-1,Math.min(1,ch[i])) * 32767, true);
-    }
-    download(new Blob([buffer], {type:'audio/wav'}), 'melodia.wav');
-  } catch (e) {
-    $('generatorStatus').textContent = 'Error al renderizar WAV: ' + e.message;
-  }
-};
-</script>
-</body>
-</html>
+function midiExport(notes,bpm){const asc=s=>[...s].map(c=>c.charCodeAt(0)),ppq=480,mpq=Math.round(60000000/bpm),events=[{t:0,b:[255,81,3,(mpq>>16)&255,(mpq>>8)&255,mpq&255]}];for(const n of notes){const st=Math.max(0,Math.round(n.start*ppq)),en=Math.max(st+1,Math.round((n.start+n.duration)*ppq));events.push({t:st,b:[144,n.n,n.velocity||95]},{t:en,b:[128,n.n,0]})}events.sort((a,b)=>a.t-b.t);let prev=0,tr=[];for(const e of events){tr.push(...vlq(e.t-prev),...e.b);prev=e.t}tr.push(0,255,47,0);const l=tr.length;return new Uint8Array([...asc('MThd'),0,0,0,6,0,0,1,0,1,224,...asc('MTrk'),(l>>>24)&255,(l>>>16)&255,(l>>>8)&255,l&255,...tr])}
+function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),2500)}
+function showNotes(){ $('notes').value=current.map(n=>names[n.n%12]+(Math.floor(n.n/12)-1)).join(' ')}
+function setOfficial(buf,name){const p=parseMidi(buf);official=p.notes.map(n=>({...n}));current=official.map(n=>({...n}));officialBuffer=buf.slice(0);officialTempo=60000000/p.tempo;$('bpm').value=Math.max(40,Math.min(240,Math.round(officialTempo)));showNotes();$('officialStatus').textContent='Referencia cargada: '+name+'\nNotas: '+official.length+'\nTempo MIDI: '+Math.round(officialTempo)+' BPM\nLas notas y sus tiempos se han importado.';$('genStatus').textContent='Referencia lista. Genera una variación.'}
+$('loadOfficial').onclick=async()=>{try{const r=await fetch('./referencia.mid?cache='+Date.now());if(!r.ok)throw Error('No encuentro referencia.mid. Sube el MIDI a la raíz del repositorio.');setOfficial(await r.arrayBuffer(),'referencia.mid')}catch(e){$('officialStatus').textContent='Error: '+e.message}};
+$('chooseMidi').onclick=()=>$('midiFile').click();$('midiFile').onchange=async e=>{const f=e.target.files[0];if(f)try{setOfficial(await f.arrayBuffer(),f.name)}catch(err){$('officialStatus').textContent='Error: '+err.message}};
+function playSeq(notes){if(!notes.length){$('genStatus').textContent='Carga primero el MIDI oficial.';return}stop();const id=token,c=audio(),beat=60/Math.max(40,Math.min(240,Number($('bpm').value)||officialTempo));const start=c.currentTime+.08;for(const n of notes)tone(n.n,Math.max(.05,n.duration*beat),n.velocity||95,start+n.start*beat);const end=Math.max(...notes.map(n=>n.start+n.duration))*beat;playTimers.push(setTimeout(()=>{if(id===token)$('genStatus').textContent='Reproducción finalizada'},(end+.3)*1000))}
+$('playOfficial').onclick=()=>playSeq(official);$('playCurrent').onclick=()=>playSeq(current);
+$('downloadOfficial').onclick=()=>{if(officialBuffer)download(new Blob([officialBuffer],{type:'audio/midi'}),'referencia-oficial.mid');else $('officialStatus').textContent='Carga primero el MIDI oficial'};
+$('v1').onclick=()=>variation(1);$('v2').onclick=()=>variation(2);$('v3').onclick=()=>variation(3);
+function variation(mode){if(!official.length){$('genStatus').textContent='Primero carga el MIDI oficial.';return}
+ const scale=[0,2,4,5,7,9,10];current=official.map((note,i)=>{let n=note.n;const change=mode===1?i%5===3:mode===2?i%3===1:i%2===1;if(change){const steps=mode===1?[-2,2]:mode===2?[-1,1]:[-3,3];n+=steps[Math.floor(Math.random()*steps.length)]}
+ // Conserva el tiempo de inicio y la duración originales; cambia solo algunas alturas.
+ return {...note,n:Math.max(36,Math.min(96,n))}});
+ showNotes();$('genStatus').textContent='Variación '+mode+' creada a partir de '+official.length+' notas oficiales; se conservan los tiempos y duraciones.'}
+$('exportMidi').onclick=()=>{if(!current.length){$('genStatus').textContent='Carga la referencia o crea una melodía.';return}download(new Blob([midiExport(current,Math.max(40,Math.min(240,Number($('bpm').value)||120)))],{type:'audio/midi'}),'variacion.mid')};
+$('exportWav').onclick=async()=>{if(!current.length){$('genStatus').textContent='Carga la referencia primero.';return}try{const bpm=Math.max(40,Math.min(240,Number($('bpm').value)||120)),beat=60/bpm,end=Math.max(...current.map(n=>(n.start+n.duration)*beat))+.3,sr=44100,off=new OfflineAudioContext(1,Math.ceil(sr*end),sr);current.forEach(n=>{const t=n.start*beat,d=Math.max(.05,n.duration*beat),o=off.createOscillator(),g=off.createGain();o.type=$('sound').value;o.frequency.value=freq(n.n);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.12,t+.01);g.gain.setValueAtTime(.12,t+d*.7);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(off.destination);o.start(t);o.stop(t+d+.02)});const b=await off.startRendering(),x=b.getChannelData(0),buf=new ArrayBuffer(44+x.length*2),v=new DataView(buf),put=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};put(0,'RIFF');v.setUint32(4,36+x.length*2,true);put(8,'WAVE');put(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);put(36,'data');v.setUint32(40,x.length*2,true);for(let i=0;i<x.length;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,x[i]))*32767,true);download(new Blob([buf],{type:'audio/wav'}),'variacion.wav')}catch(e){$('genStatus').textContent='Error al generar WAV: '+e.message}};
+$('audioFile').onchange=()=>{$('audioStatus').textContent=$('audioFile').files[0]?'Seleccionado: '+$('audioFile').files[0].name:'Sin archivo'};
+$('analyze').onclick=async()=>{const f=$('audioFile').files[0];if(!f){$('audioStatus').textContent='Selecciona un WAV o MP3 primero.';return}let c;try{c=new(window.AudioContext||window.webkitAudioContext)();const b=await c.decodeAudioData(await f.arrayBuffer());$('audioStatus').textContent='Archivo: '+f.name+'\nDuración: '+b.duration.toFixed(2)+' s\nFrecuencia: '+b.sampleRate+' Hz\nEste análisis básico no detecta las notas de la melodía.'}catch(e){$('audioStatus').textContent='No se pudo decodificar el archivo en este navegador.'}finally{if(c)await c.close()}};
+</script></body></html>
