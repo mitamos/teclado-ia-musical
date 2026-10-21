@@ -3,166 +3,274 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Teclado IA Musical</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#10131c;color:white;font-family:Arial,sans-serif;padding:22px}
+body{margin:0;padding:18px;background:#10131c;color:#fff;font-family:Arial,sans-serif}
 h1{text-align:center;color:#62e6ce}
-.panel{max-width:1000px;margin:20px auto;background:#1b2130;padding:20px;border-radius:15px}
-button,select,input{padding:11px;margin:5px;border:0;border-radius:7px}
+.panel{max-width:1000px;margin:20px auto;padding:20px;background:#1b2130;border-radius:15px}
+button,select,input{padding:10px;margin:5px;border:0;border-radius:7px}
 button{background:#62e6ce;color:#10131c;font-weight:bold;cursor:pointer}
 button:hover{background:#9fffea}
-.keyboard{display:flex;position:relative;overflow-x:auto;padding:5px 0 18px;min-height:190px}
-.key{flex:0 0 48px;height:165px;background:white;border:1px solid #333;border-radius:0 0 6px 6px;color:#222;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;cursor:pointer;user-select:none}
-.key.black{background:#171923;color:white;height:105px;flex-basis:32px;margin-left:-16px;margin-right:-16px;z-index:2;border-radius:0 0 5px 5px}
-.key.active{background:#62e6ce!important;color:#111}
 .row{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
-textarea{width:100%;height:90px}
-#status{color:#62e6ce;white-space:pre-wrap}
-small{color:#b9c5d8}
+.keyboard{display:flex;overflow-x:auto;padding:5px 0 18px;min-height:185px}
+.key{flex:0 0 44px;height:160px;background:#fff;border:1px solid #333;border-radius:0 0 5px 5px;color:#222;display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px;cursor:pointer}
+.key.black{background:#171923;color:#fff;height:100px;flex-basis:29px;margin-left:-14px;margin-right:-14px;z-index:2}
+.key.active{background:#62e6ce;color:#111}
+textarea{width:100%;height:95px;border-radius:7px;padding:10px}
+small,.muted{color:#bdc8d8}
+#status,#sampleInfo,#results{white-space:pre-wrap;overflow-wrap:anywhere;color:#62e6ce}
+#drop{border:2px dashed #62e6ce;border-radius:10px;padding:18px;margin:12px 0}
+progress{width:100%}
 </style>
 </head>
 <body>
 <h1>🎹 TECLADO IA MUSICAL</h1>
+
 <div class="panel">
-<h2>Instrumento virtual</h2>
+<h2>🎹 Instrumento virtual</h2>
 <div class="row">
-<label>Sonido:
+<label>Sonido
 <select id="sound">
-<option value="sine">Senoidal suave</option>
 <option value="triangle">Teclado suave</option>
+<option value="sine">Senoidal</option>
 <option value="square">Sintetizador</option>
 <option value="sawtooth">Órgano electrónico</option>
 </select></label>
 <label>Volumen <input id="volume" type="range" min="0" max="100" value="35"></label>
-<button id="octDown">− Octava</button>
-<button id="octUp">+ Octava</button>
+<button id="down">− Octava</button>
+<button id="up">+ Octava</button>
 </div>
-<p><small>Pulsa las teclas con el ratón o utiliza tu teclado del ordenador (A W S E D F T G Y H U J K).</small></p>
+<p class="muted">Toca con el ratón o usa A W S E D F T G Y H U J K.</p>
 <div class="keyboard" id="keyboard"></div>
-<p id="status">Listo. Pulsa una tecla para comenzar.</p>
+<p id="status">Listo. Pulsa una tecla.</p>
 </div>
+
+<div class="panel">
+<h2>🎧 Subir muestras musicales</h2>
+<p>Selecciona archivos propios o que tengas autorización para analizar. Puedes elegir WAV, MP3 o MIDI.</p>
+<div id="drop">
+<input id="files" type="file" accept=".wav,.mp3,.mid,.midi,audio/wav,audio/mpeg,audio/midi" multiple>
+<p class="muted">Los archivos se procesan en este navegador. No se suben a un servidor.</p>
+</div>
+<div id="sampleInfo">No has seleccionado archivos.</div>
+<div class="row">
+<button id="analyze">🔎 Analizar muestra</button>
+<button id="variation">🎼 Generar variación</button>
+</div>
+<div id="results"></div>
+</div>
+
 <div class="panel">
 <h2>🎼 Compositor de melodías</h2>
 <div class="row">
-<label>Estilo:
+<label>Estilo
 <select id="style">
 <option value="cumbia">Cumbia tropical</option>
-<option value="sureña">Cumbia sureña</option>
+<option value="surena">Cumbia sureña</option>
 <option value="alegre">Melodía alegre</option>
 <option value="suave">Melodía suave</option>
 </select></label>
-<label>Tempo <input id="bpm" type="number" min="50" max="200" value="110" style="width:80px"></label>
+<label>Tempo <input id="bpm" type="number" min="50" max="200" value="110" style="width:85px"></label>
 <button id="generate">✨ Crear melodía</button>
 <button id="play">▶ Reproducir</button>
 <button id="stop">■ Detener</button>
 </div>
-<p><small>Generador inicial de melodías por reglas musicales; todavía no es una IA entrenada con audio.</small></p>
+<p class="muted">Generador experimental por reglas musicales, no un modelo entrenado.</p>
 <textarea id="notes" placeholder="Aquí aparecerán las notas generadas"></textarea>
 <div class="row">
 <button id="midi">Descargar MIDI</button>
-<button id="wav">Descargar audio WAV</button>
+<button id="wav">Descargar WAV</button>
 </div>
-<p><small>El WAV puede convertirse a MP3. La exportación MIDI permite editar las notas en Cubase.</small></p>
+<p class="muted">El WAV no es MP3. Puedes convertirlo después a MP3.</p>
 </div>
+
 <script>
-let ctx=null, octave=4, active=new Map(), sequence=[], timers=[];
+'use strict';
+let ctx=null,octave=4,sequence=[],timers=[];
 const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const white=[0,2,4,5,7,9,11];
-function audio(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();return ctx}
+let referenceTempo=110,referenceFile=null,referenceMidi=null;
+
+function audio(){
+ if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
+ if(ctx.state==='suspended')ctx.resume();
+ return ctx;
+}
 function freq(n){return 440*Math.pow(2,(n-69)/12)}
-function tone(n,duration=.4){
-const c=audio(),o=c.createOscillator(),g=c.createGain();
-o.type=document.getElementById('sound').value;
-o.frequency.value=freq(n);
-g.gain.value=Math.max(.001,Number(document.getElementById('volume').value)/100)*.16;
-o.connect(g);g.connect(c.destination);
-g.gain.setValueAtTime(g.gain.value,c.currentTime);
-g.gain.exponentialRampToValueAtTime(.001,c.currentTime+duration);
-o.start();o.stop(c.currentTime+duration+.03);
+function tone(n,duration=.35){
+ const c=audio(),o=c.createOscillator(),g=c.createGain();
+ o.type=document.getElementById('sound').value;
+ o.frequency.value=freq(n);
+ const vol=Number(document.getElementById('volume').value)/100*.16;
+ g.gain.setValueAtTime(Math.max(.0001,vol),c.currentTime);
+ g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+duration);
+ o.connect(g);g.connect(c.destination);
+ o.start();o.stop(c.currentTime+duration+.02);
 }
 function build(){
-const el=document.getElementById('keyboard');el.innerHTML='';
-for(let n=0;n<24;n++){
-const midi=12*(octave)+n;
-const k=document.createElement('div');
-k.className='key'+(names[n%12].includes('#')?' black':'');
-k.textContent=names[n%12]+(Math.floor(midi/12)-1);
-k.onpointerdown=e=>{e.preventDefault();audio();tone(midi);k.classList.add('active')};
-k.onpointerup=()=>k.classList.remove('active');
-k.onpointerleave=()=>k.classList.remove('active');
-el.appendChild(k);
-}}
-build();
-document.getElementById('octDown').onclick=()=>{octave=Math.max(1,octave-1);build()};
-document.getElementById('octUp').onclick=()=>{octave=Math.min(7,octave+1);build()};
-const map={'a':0,'w':1,'s':2,'e':3,'d':4,'f':5,'t':6,'g':7,'y':8,'h':9,'u':10,'j':11,'k':12};
-document.addEventListener('keydown',e=>{
-if(e.repeat||e.target.matches('input,textarea,select'))return;
-const i=map[e.key.toLowerCase()];
-if(i!==undefined){audio();tone(12*octave+i);document.querySelectorAll('.key')[i]?.classList.add('active')}
-});
-document.addEventListener('keyup',e=>{
-const i=map[e.key.toLowerCase()];
-if(i!==undefined)document.querySelectorAll('.key')[i]?.classList.remove('active')
-});
-document.getElementById('generate').onclick=()=>{
-const style=document.getElementById('style').value;
-const scales=style==='suave'?[0,2,3,5,7,9,10]:style==='sureña'?[0,2,3,5,7,8,10]:[0,2,4,5,7,9,10];
-let prev=60+scales[0];sequence=[];
-for(let i=0;i<32;i++){
-let n;
-if(i===0||Math.random()<.2)n=60+scales[Math.floor(Math.random()*scales.length)];
-else n=prev+[-2,-1,0,1,2,3,-3][Math.floor(Math.random()*7)];
-n=Math.max(60,Math.min(79,n));
-sequence.push({n,d:.28});
-prev=n;
+ const el=document.getElementById('keyboard');el.innerHTML='';
+ for(let i=0;i<24;i++){
+  const n=octave*12+i,k=document.createElement('div');
+  k.className='key'+(names[n%12].includes('#')?' black':'');
+  k.textContent=names[n%12]+(Math.floor(n/12)-1);
+  k.onpointerdown=e=>{e.preventDefault();tone(n);k.classList.add('active')};
+  k.onpointerup=()=>k.classList.remove('active');
+  k.onpointerleave=()=>k.classList.remove('active');
+  el.appendChild(k);
+ }
 }
-document.getElementById('notes').value=sequence.map(x=>names[x.n%12]+(Math.floor(x.n/12)-1)).join(' ');
-document.getElementById('status').textContent='Melodía creada: '+sequence.length+' notas.';
+build();
+document.getElementById('down').onclick=()=>{octave=Math.max(1,octave-1);build()};
+document.getElementById('up').onclick=()=>{octave=Math.min(7,octave+1);build()};
+const keys={'a':0,'w':1,'s':2,'e':3,'d':4,'f':5,'t':6,'g':7,'y':8,'h':9,'u':10,'j':11,'k':12};
+document.addEventListener('keydown',e=>{
+ if(e.repeat||e.target.matches('input,textarea,select'))return;
+ const i=keys[e.key.toLowerCase()];
+ if(i!==undefined)tone(octave*12+i);
+});
+
+const fileInput=document.getElementById('files');
+fileInput.addEventListener('change',()=>{
+ referenceFile=null;referenceMidi=null;
+ const files=[...fileInput.files];
+ document.getElementById('sampleInfo').textContent=files.length
+  ?files.map(f=>`${f.name} — ${(f.size/1048576).toFixed(2)} MB`).join('\n')
+  :'No has seleccionado archivos.';
+ document.getElementById('results').textContent='';
+ if(files.length){
+  const f=files[0],ext=f.name.split('.').pop().toLowerCase();
+  if(['wav','mp3'].includes(ext))referenceFile=f;
+  if(['mid','midi'].includes(ext))referenceMidi=f;
+ }
+});
+
+document.getElementById('analyze').onclick=async()=>{
+ const out=document.getElementById('results');
+ if(!referenceFile&&!referenceMidi){
+  out.textContent='Selecciona un archivo WAV o MP3 para analizar audio, o un MIDI para consultar sus características.';
+  return;
+ }
+ if(referenceMidi){
+  out.textContent='MIDI seleccionado: '+referenceMidi.name+
+   '\nLa extracción de notas MIDI requiere añadir un lector MIDI. Este prototipo aún no lo incluye.';
+  return;
+ }
+ let c;
+ try{
+  out.textContent='Analizando audio en el navegador…';
+  c=new(window.AudioContext||window.webkitAudioContext)();
+  const b=await c.decodeAudioData(await referenceFile.arrayBuffer());
+  const x=b.getChannelData(0),rate=b.sampleRate;
+  const block=1024,env=[];
+  for(let i=0;i<x.length;i+=block){
+   let sum=0,end=Math.min(i+block,x.length);
+   for(let j=i;j<end;j++)sum+=x[j]*x[j];
+   env.push(Math.sqrt(sum/(end-i)));
+  }
+  const max=Math.max(...env),threshold=Math.max(.008,max*.22),peaks=[];
+  for(let i=1;i<env.length-1;i++){
+   if(env[i]>threshold&&env[i]>=env[i-1]&&env[i]>env[i+1]){
+    if(!peaks.length||i-peaks[peaks.length-1]>8)peaks.push(i);
+   }
+  }
+  const intervals=[];
+  for(let i=1;i<peaks.length;i++)intervals.push((peaks[i]-peaks[i-1])*block/rate);
+  let tempo=null;
+  if(intervals.length){
+   intervals.sort((a,b)=>a-b);
+   tempo=60/intervals[Math.floor(intervals.length/2)];
+   while(tempo<60)tempo*=2;
+   while(tempo>180)tempo/=2;
+   referenceTempo=Math.round(tempo);
+   document.getElementById('bpm').value=referenceTempo;
+  }
+  out.textContent='ANÁLISIS PRELIMINAR\nArchivo: '+referenceFile.name+
+   '\nDuración: '+b.duration.toFixed(2)+' s'+
+   '\nFrecuencia de muestreo: '+rate+' Hz'+
+   '\nPicos de energía detectados: '+peaks.length+
+   '\nTempo aproximado: '+(tempo?referenceTempo+' BPM':'no determinado')+
+   '\n\nNo se han extraído las notas ni la tonalidad. Los picos de energía no siempre corresponden a notas musicales.';
+ }catch(e){
+  out.textContent='No se pudo decodificar el archivo. Prueba con un WAV o MP3 válido.';
+ }finally{if(c)await c.close()}
+};
+
+function generate(){
+ const style=document.getElementById('style').value;
+ const scales=style==='suave'?[0,2,3,5,7,9,10]:
+  style==='surena'?[0,2,3,5,7,8,10]:[0,2,4,5,7,9,10];
+ let prev=60;sequence=[];
+ for(let i=0;i<32;i++){
+  let n;
+  if(i===0||Math.random()<.2)n=60+scales[Math.floor(Math.random()*scales.length)];
+  else n=prev+[-2,-1,0,1,2,3,-3][Math.floor(Math.random()*7)];
+  n=Math.max(60,Math.min(79,n));
+  sequence.push({n,d:1});
+  prev=n;
+ }
+ document.getElementById('notes').value=sequence.map(x=>names[x.n%12]+(Math.floor(x.n/12)-1)).join(' ');
+ document.getElementById('status').textContent='Melodía creada: '+sequence.length+' notas.';
+}
+document.getElementById('generate').onclick=generate;
+document.getElementById('variation').onclick=()=>{
+ if(!referenceFile&&!referenceMidi){
+  document.getElementById('results').textContent='Primero selecciona una muestra.';
+  return;
+ }
+ document.getElementById('bpm').value=referenceTempo;
+ generate();
+ document.getElementById('results').textContent=
+  'Variación generada con el tempo de referencia. No se han copiado ni aprendido las notas del audio.';
 };
 function stop(){timers.forEach(clearTimeout);timers=[]}
 document.getElementById('stop').onclick=stop;
 document.getElementById('play').onclick=()=>{
-stop();if(!sequence.length)document.getElementById('generate').click();
-const beat=60000/Math.max(50,Math.min(200,Number(document.getElementById('bpm').value)||110))/2;
-sequence.forEach((x,i)=>timers.push(setTimeout(()=>tone(x.n,beat/1000*.85),i*beat)));
+ stop();if(!sequence.length)generate();
+ const beat=30000/Math.max(50,Math.min(200,Number(document.getElementById('bpm').value)||110));
+ sequence.forEach((x,i)=>timers.push(setTimeout(()=>tone(x.n,beat/1000*.85),i*beat)));
 };
 function download(blob,name){
-const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
-setTimeout(()=>URL.revokeObjectURL(a.href),2000)
+ const a=document.createElement('a'),url=URL.createObjectURL(blob);
+ a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+function vlq(v){
+ let a=[v&127];while((v>>=7))a.unshift((v&127)|128);return a;
 }
 document.getElementById('midi').onclick=()=>{
-if(!sequence.length)document.getElementById('generate').click();
-const bpm=Math.max(50,Math.min(200,Number(document.getElementById('bpm').value)||110));
-const data=[];
-function vlq(v){let b=[v&127];while((v>>=7)){b.unshift((v&127)|128)}return b}
-function ascii(s){return [...s].map(c=>c.charCodeAt(0))}
-function ev(dt,bytes){data.push(...vlq(dt),...bytes)}
-ev(0,[255,81,3,...[(60000000/bpm)>>16&255,(60000000/bpm)>>8&255,(60000000/bpm)&255]]);
-sequence.forEach(x=>{ev(0,[144,x.n,95]);ev(240,[128,x.n,0])});
-ev(0,[255,47,0]);
-const len=data.length,track=[...ascii('MTrk'),len>>>24&255,len>>>16&255,len>>>8&255,len&255,...data];
-const header=[...ascii('MThd'),0,0,0,6,0,0,0,1,0,240];
-download(new Blob([new Uint8Array([...header,...track])],{type:'audio/midi'}),'melodia.mid');
+ if(!sequence.length)generate();
+ const bpm=Math.max(50,Math.min(200,Number(document.getElementById('bpm').value)||110));
+ const data=[],ascii=s=>[...s].map(c=>c.charCodeAt(0));
+ function ev(dt,bytes){data.push(...vlq(dt),...bytes)}
+ const mpq=Math.round(60000000/bpm);
+ ev(0,[255,81,3,(mpq>>16)&255,(mpq>>8)&255,mpq&255]);
+ sequence.forEach(x=>{ev(0,[144,x.n,95]);ev(240,[128,x.n,0])});
+ ev(0,[255,47,0]);
+ const len=data.length;
+ const track=[...ascii('MTrk'),(len>>>24)&255,(len>>>16)&255,(len>>>8)&255,len&255,...data];
+ const header=[...ascii('MThd'),0,0,0,6,0,0,0,1,0,240];
+ download(new Blob([new Uint8Array([...header,...track])],{type:'audio/midi'}),'melodia.mid');
 };
 document.getElementById('wav').onclick=async()=>{
-if(!sequence.length)document.getElementById('generate').click();
-const bpm=Math.max(50,Math.min(200,Number(document.getElementById('bpm').value)||110));
-const sr=44100,step=60/bpm/2,dur=sequence.length*step+.5;
-const offline=new OfflineAudioContext(1,Math.ceil(sr*dur),sr);
-sequence.forEach((x,i)=>{
-const o=offline.createOscillator(),g=offline.createGain();
-o.type=document.getElementById('sound').value;o.frequency.value=freq(x.n);
-const t=i*step;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+step*.85);
-o.connect(g);g.connect(offline.destination);o.start(t);o.stop(t+step*.9);
-});
-const b=await offline.startRendering(),ch=b.getChannelData(0),buf=new ArrayBuffer(44+ch.length*2),v=new DataView(buf);
-function s(o,t){for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))}
-s(0,'RIFF');v.setUint32(4,36+ch.length*2,true);s(8,'WAVE');s(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);s(36,'data');v.setUint32(40,ch.length*2,true);
-for(let i=0;i<ch.length;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,ch[i]))*32767,true);
-download(new Blob([buf],{type:'audio/wav'}),'melodia.wav');
+ if(!sequence.length)generate();
+ const bpm=Math.max(50,Math.min(200,Number(document.getElementById('bpm').value)||110));
+ const sr=44100,step=30/bpm,dur=sequence.length*step+.5;
+ const off=new OfflineAudioContext(1,Math.ceil(sr*dur),sr);
+ sequence.forEach((x,i)=>{
+  const o=off.createOscillator(),g=off.createGain(),t=i*step;
+  o.type=document.getElementById('sound').value;o.frequency.value=freq(x.n);
+  g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+step*.85);
+  o.connect(g);g.connect(off.destination);o.start(t);o.stop(t+step*.9);
+ });
+ const b=await off.startRendering(),ch=b.getChannelData(0);
+ const buf=new ArrayBuffer(44+ch.length*2),v=new DataView(buf);
+ function put(o,s){for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))}
+ put(0,'RIFF');v.setUint32(4,36+ch.length*2,true);put(8,'WAVE');put(12,'fmt ');
+ v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+ v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);
+ put(36,'data');v.setUint32(40,ch.length*2,true);
+ for(let i=0;i<ch.length;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,ch[i]))*32767,true);
+ download(new Blob([buf],{type:'audio/wav'}),'melodia.wav');
 };
 </script>
 </body>
